@@ -216,9 +216,15 @@ void CaroServer::broadcastUsers() const {
             array.append(QJsonObject{{QStringLiteral("name"), name}, {QStringLiteral("busy"), session.roomId >= 0}});
     }
     QJsonObject obj{{QStringLiteral("type"), QStringLiteral("users")}, {QStringLiteral("users"), array}};
-    for (const auto &session : sessions_) send(session.socket, obj);
+    if (recipient) {
+    send(recipient, obj);
+} else {
+    for (const auto &session : sessions_) {
+        send(session.socket, obj);
+    }
 }
-void CaroServer::broadcastRooms() const {
+}
+void CaroServer::broadcastRooms(QTcpSocket *recipient) const {
     QList<int> ids = rooms_.keys(); std::sort(ids.begin(), ids.end());
     QJsonArray array;
     for (int id : ids) {
@@ -353,7 +359,7 @@ void CaroServer::process(QTcpSocket *socket, const QJsonObject &msg) {
     }
     if (me.isEmpty()) { error(socket, QStringLiteral("Cần đăng nhập trước.")); return; }
     if (type == QStringLiteral("list_users")) { broadcastUsers(); return; }
-    if (type == QStringLiteral("list_rooms")) { broadcastRooms(); return; }
+    if (type == QStringLiteral("list_rooms")) { broadcastRooms(socket); return; }
     if (type == QStringLiteral("history")) { sendHistory(me); return; }
     if (type == QStringLiteral("invite")) {
         QString target = msg.value(QStringLiteral("target")).toString();
