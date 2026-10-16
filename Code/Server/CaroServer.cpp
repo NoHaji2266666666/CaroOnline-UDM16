@@ -66,6 +66,17 @@ bool CaroServer::openDatabase() {
         log(QStringLiteral("SCHEMA ERROR: ") + query.lastError().text());
         return false;
     }
+    QSqlQuery roomQuery(database_);
+
+if (!roomQuery.exec(
+        QStringLiteral("SELECT COALESCE(MAX(room_id), 0) FROM matches"))) {
+    log(QStringLiteral("ROOM ID ERROR: ") + roomQuery.lastError().text());
+    return false;
+}
+
+if (roomQuery.next()) {
+    nextRoomId_ = roomQuery.value(0).toInt() + 1;
+}
     return true;
 }
 bool CaroServer::start(const QString &address, quint16 port) {
