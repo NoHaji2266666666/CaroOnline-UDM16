@@ -1,0 +1,31 @@
+﻿CaroOnline - KET QUA DO TAI NGUYEN SERVER
+Thoi gian: 2026-10-17T03:34:17+07:00
+He dieu hanh: Windows-11-10.0.26300-SP0
+So CPU logic: 12
+Server PID: 18480
+Client gia lap: 5; Yeu cau list_rooms: 500
+So mau CPU/RAM: 5; chu ky lay mau: 0.2 giay
+CPU% la phan tram tren TONG CPU may, RAM la Working Set (khac Private Working Set).
+Ket qua chi do list_rooms qua 127.0.0.1, khong phai stress test toan bo gameplay.
+Probe exit code: 0
+CPU trung binh (theo mau): 4.29%
+CPU cao nhat (theo mau): 7.79%
+RAM trung binh (Working Set): 23.39 MB
+RAM cao nhat (Working Set): 23.57 MB
+
+LOG KIEM THU:
+Starting: 5 Client(s), 500 request(s), 127.0.0.1:45454
+Connected: 5/5
+All Client(s) connected. Measuring requests...
+Requests: 50/500
+Requests: 100/500
+Requests: 150/500
+Requests: 200/500
+Requests: 250/500
+Requests: 300/500
+Requests: 350/500
+Requests: 400/500
+Requests: 450/500
+Requests: 500/500
+OK connected_clients=5 requests=500 mean_ms=1.01 p95_ms=1.63 max_ms=4.69
+NOTE: This tests room-list request latency on the configured network only, not full-game stress or CPU/RAM.
