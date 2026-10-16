@@ -66,3 +66,28 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+# Visual Studio / CMake
+.vs/
+out/
+CMakeSettings.json
+CMakeUserPresets.json
+*.user
+*.suo
+
+# Python cache
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local database and sensitive files
+*.sqlite
+*.sqlite3
+*.db
+.env
+.env.*
+!.env.example
+
+# Windows
+Thumbs.db
+.DS_Store
