@@ -68,15 +68,15 @@ bool CaroServer::openDatabase() {
     }
     QSqlQuery roomQuery(database_);
 
-if (!roomQuery.exec(
+    if (!roomQuery.exec(
         QStringLiteral("SELECT COALESCE(MAX(room_id), 0) FROM matches"))) {
-    log(QStringLiteral("ROOM ID ERROR: ") + roomQuery.lastError().text());
-    return false;
-}
+        log(QStringLiteral("ROOM ID ERROR: ") + roomQuery.lastError().text());
+        return false;
+    }
 
-if (roomQuery.next()) {
-    nextRoomId_ = roomQuery.value(0).toInt() + 1;
-}
+    if (roomQuery.next()) {
+        nextRoomId_ = roomQuery.value(0).toInt() + 1;
+    }
     return true;
 }
 bool CaroServer::start(const QString &address, quint16 port) {
@@ -207,36 +207,69 @@ bool CaroServer::userAvailable(const QString &name) const {
     auto it = sessions_.constFind(name);
     return it != sessions_.cend() && it->socket && it->roomId < 0;
 }
+
 void CaroServer::broadcastUsers() const {
-    QStringList keys = sessions_.keys(); keys.sort(Qt::CaseInsensitive);
+    QStringList keys = sessions_.keys();
+    keys.sort(Qt::CaseInsensitive);
+
     QJsonArray array;
-    for (const auto &name : keys) {
-        const auto &session = sessions_[name];
-        if (session.socket)
-            array.append(QJsonObject{{QStringLiteral("name"), name}, {QStringLiteral("busy"), session.roomId >= 0}});
+    for (const auto& name : keys) {
+        const auto& session = sessions_[name];
+
+        if (session.socket) {
+            array.append(QJsonObject{
+                { QStringLiteral("name"), name },
+                { QStringLiteral("busy"), session.roomId >= 0 }
+                });
+        }
     }
-    QJsonObject obj{{QStringLiteral("type"), QStringLiteral("users")}, {QStringLiteral("users"), array}};
-    if (recipient) {
-    send(recipient, obj);
-} else {
-    for (const auto &session : sessions_) {
+
+    QJsonObject obj{
+        { QStringLiteral("type"), QStringLiteral("users") },
+        { QStringLiteral("users"), array }
+    };
+
+    for (const auto& session : sessions_) {
         send(session.socket, obj);
     }
 }
-}
-void CaroServer::broadcastRooms(QTcpSocket *recipient) const {
-    QList<int> ids = rooms_.keys(); std::sort(ids.begin(), ids.end());
+
+void CaroServer::broadcastRooms(QTcpSocket* recipient) const {
+    QList<int> ids = rooms_.keys();
+    std::sort(ids.begin(), ids.end());
+
     QJsonArray array;
+
     for (int id : ids) {
-        const Room &room = rooms_[id];
+        const Room& room = rooms_[id];
+
         if (!room.active) continue;
-        array.append(QJsonObject{{QStringLiteral("id"), id}, {QStringLiteral("x"), room.x},
-          {QStringLiteral("o"), room.o}, {QStringLiteral("spectators"), room.spectators.size()},
-          {QStringLiteral("paused"), room.paused}});
+
+        array.append(QJsonObject{
+            { QStringLiteral("id"), id },
+            { QStringLiteral("x"), room.x },
+            { QStringLiteral("o"), room.o },
+            { QStringLiteral("spectators"), room.spectators.size() },
+            { QStringLiteral("paused"), room.paused }
+            });
     }
-    QJsonObject obj{{QStringLiteral("type"), QStringLiteral("rooms")}, {QStringLiteral("rooms"), array}};
-    for (const auto &session : sessions_) send(session.socket, obj);
+
+    QJsonObject obj{
+        { QStringLiteral("type"), QStringLiteral("rooms") },
+        { QStringLiteral("rooms"), array }
+    };
+
+    if (recipient != nullptr) {
+        send(recipient, obj);
+    }
+    else {
+        for (const auto& session : sessions_) {
+            send(session.socket, obj);
+        }
+    }
 }
+
+
 void CaroServer::sendHistory(const QString &user) {
     QJsonArray entries;
     QSqlQuery query(database_);
