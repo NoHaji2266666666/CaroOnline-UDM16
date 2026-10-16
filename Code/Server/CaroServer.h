@@ -66,7 +66,7 @@ private:
     void error(QTcpSocket *socket, const QString &message) const;
     void notice(const QString &user, const QString &message) const;
     void broadcastUsers() const;
-    void broadcastRooms() const;
+    void broadcastRooms(QTcpSocket *recipient = nullptr) const;
     void sendHistory(const QString &user);
     bool userAvailable(const QString &name) const;
     void createMatch(const QString &x, const QString &o);
