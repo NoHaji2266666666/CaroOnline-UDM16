@@ -55,6 +55,21 @@ Các file được tạo trong `Extra/results/` (cần xác nhận đã upload G
 - Mạng: TCP localhost `127.0.0.1`, cổng `45454`.
 - CPU logic: 12 (theo script).
 - Cơ sở dữ liệu: SQLite; lưu lịch sử trận trên máy chạy Server.
+### Kết quả sau khi tối ưu Server (17/10/2026)
+
+Đã tối ưu xử lý `list_rooms` để Server chỉ gửi phản hồi cho Client yêu cầu. Chạy lại 3 mức tải, mỗi mức 500 yêu cầu.
+
+| Client | Mean (ms) | P95 (ms) | Max (ms) | CPU TB (%) | CPU max (%) | RAM TB (MB) | RAM max (MB) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 5 | 0.64 | 1.63 | 5.61 | 2.86 | 6.51 | 22.54 | 22.74 |
+| 20 | 0.34 | 1.02 | 1.89 | 3.90 | 7.14 | 23.50 | 24.12 |
+| 50 | 0.34 | 0.79 | 3.64 | 5.84 | 8.44 | 25.17 | 26.77 |
+
+Kết quả: Cả ba mức đều PASS (500/500 yêu cầu).
+Bằng chứng: 6 file CSV/TXT được lưu trong `Extra/results/`, thời điểm 05:33, 05:36 và 05:38 ngày 17/10/2026.
+
+Giới hạn: Kiểm thử trên localhost, chỉ đo yêu cầu `list_rooms`, mỗi mức chạy một lần. Chưa phải kiểm thử tải toàn bộ gameplay. Số liệu trước/sau có thể chịu ảnh hưởng bởi điều kiện chạy.
+
 
 ## 5. Việc còn phải kiểm tra
 
